@@ -186,3 +186,184 @@ impl<T: Ord> BinarySearchTree<T> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn sample_tree() -> BinarySearchTree<i32> {
+        let mut tree = BinarySearchTree::new();
+
+        for value in [5, 3, 7, 1, 4, 6, 8] {
+            tree.insert(value);
+        }
+
+        tree
+    }
+
+    #[test]
+    fn new_tree_is_empty() {
+        let tree = BinarySearchTree::<i32>::new();
+
+        assert!(tree.is_empty());
+        assert_eq!(tree.len(), 0);
+    }
+
+    #[test]
+    fn default_tree_is_empty() {
+        let tree = BinarySearchTree::<i32>::default();
+
+        assert!(tree.is_empty());
+        assert_eq!(tree.len(), 0);
+    }
+
+    #[test]
+    fn insert_into_empty_tree() {
+        let mut tree = BinarySearchTree::new();
+
+        assert!(tree.insert(5));
+        assert_eq!(tree.len(), 1);
+        assert!(tree.contains(&5));
+    }
+
+    #[test]
+    fn insert_multiple_values() {
+        let tree = sample_tree();
+
+        assert_eq!(tree.len(), 7);
+
+        for value in [1, 3, 4, 5, 6, 7, 8] {
+            assert!(tree.contains(&value));
+        }
+    }
+
+    #[test]
+    fn duplicate_insert_returns_false() {
+        let mut tree = BinarySearchTree::new();
+
+        assert!(tree.insert(5));
+        assert!(!tree.insert(5));
+
+        assert_eq!(tree.len(), 1);
+    }
+
+    #[test]
+    fn contains_returns_false_for_missing_value() {
+        let tree = sample_tree();
+
+        assert!(!tree.contains(&2));
+        assert!(!tree.contains(&9));
+    }
+
+    #[test]
+    fn contains_on_empty_tree_returns_false() {
+        let tree = BinarySearchTree::<i32>::new();
+
+        assert!(!tree.contains(&42));
+    }
+
+    #[test]
+    fn min_on_empty_tree_is_none() {
+        let tree = BinarySearchTree::<i32>::new();
+
+        assert_eq!(tree.min(), None);
+    }
+
+    #[test]
+    fn max_on_empty_tree_is_none() {
+        let tree = BinarySearchTree::<i32>::new();
+
+        assert_eq!(tree.max(), None);
+    }
+
+    #[test]
+    fn min_returns_smallest_value() {
+        let tree = sample_tree();
+
+        assert_eq!(tree.min(), Some(&1));
+    }
+
+    #[test]
+    fn max_returns_largest_value() {
+        let tree = sample_tree();
+
+        assert_eq!(tree.max(), Some(&8));
+    }
+
+    #[test]
+    fn min_and_max_single_node() {
+        let mut tree = BinarySearchTree::new();
+
+        tree.insert(42);
+
+        assert_eq!(tree.min(), Some(&42));
+        assert_eq!(tree.max(), Some(&42));
+    }
+
+    #[test]
+    fn clear_empties_tree() {
+        let mut tree = sample_tree();
+
+        tree.clear();
+
+        assert!(tree.is_empty());
+        assert_eq!(tree.len(), 0);
+        assert_eq!(tree.min(), None);
+        assert_eq!(tree.max(), None);
+    }
+
+    #[test]
+    fn clear_on_empty_tree_is_safe() {
+        let mut tree = BinarySearchTree::<i32>::new();
+
+        tree.clear();
+
+        assert!(tree.is_empty());
+        assert_eq!(tree.len(), 0);
+    }
+
+    #[test]
+    fn inorder_returns_sorted_values() {
+        let tree = sample_tree();
+
+        let mut values = Vec::new();
+
+        tree.inorder(|v| values.push(*v));
+
+        assert_eq!(values, vec![1, 3, 4, 5, 6, 7, 8]);
+    }
+
+    #[test]
+    fn height_of_empty_tree_is_zero() {
+        let tree = BinarySearchTree::<i32>::new();
+
+        assert_eq!(tree.height(), 0);
+    }
+
+    #[test]
+    fn height_of_single_node_tree_is_one() {
+        let mut tree = BinarySearchTree::new();
+
+        tree.insert(5);
+
+        assert_eq!(tree.height(), 1);
+    }
+
+    #[test]
+    fn height_of_balanced_tree() {
+        let tree = sample_tree();
+
+        assert_eq!(tree.height(), 3);
+    }
+
+    #[test]
+    fn height_of_degenerate_tree() {
+        let mut tree = BinarySearchTree::new();
+
+        for i in 1..=7 {
+            tree.insert(i);
+        }
+
+        assert_eq!(tree.height(), 7);
+    }
+}
