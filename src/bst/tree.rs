@@ -68,6 +68,7 @@ impl<T> BinarySearchTree<T> {
         self.len = 0;
     }
 
+    /// Returns the minimum element.
     pub fn min(&self) -> Option<&T> {
         let mut current = self.root.as_ref()?;
 
@@ -78,6 +79,7 @@ impl<T> BinarySearchTree<T> {
         Some(&current.value)
     }
 
+    /// Returns the maximum element. 
     pub fn max(&self) -> Option<&T> {
         let mut current = self.root.as_ref()?;
 
@@ -186,6 +188,7 @@ impl<T: Ord> BinarySearchTree<T> {
         }
     }
 }
+
 
 #[cfg(test)]
 mod tests {
@@ -367,3 +370,4 @@ mod tests {
         assert_eq!(tree.height(), 7);
     }
 }
+
